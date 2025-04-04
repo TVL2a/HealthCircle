@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙/☀️</button>
+
+    <div class="container">
+        <h1>Wellness Tracker</h1>
+
+        <!-- Water Intake -->
+        <div class="section">
+            <h2>Water Intake 💧</h2>
+            <p>Glasses Today: <span id="water-count">0</span></p>
+            <button onclick="addWater()">+1 Glass</button>
+            <p>Total This Week: <span id="weekly-water">0</span></p>
+        </div>
+
+        <!-- Meal Intake -->
+        <div class="section">
+            <h2>Meal Intake 🍽️</h2>
+            <input type="text" id="meal-input" placeholder="Enter meal">
+            <button onclick="logMeal()">Log Meal</button>
+            <ul id="meal-list"></ul>
+            <p>Meals This Week: <span id="weekly-meals">0</span></p>
+        </div>
+
+        <!-- Daily Activity -->
+        <div class="section">
+            <h2>Daily Activity 🏃</h2>
+            <input type="text" id="activity-input" placeholder="Enter activity">
+            <button onclick="logActivity()">Log Activity</button>
+            <ul id="activity-list"></ul>
+            <p>Activities This Week: <span id="weekly-activities">0</span></p>
+        </div>
+
+        <!-- Nudge System -->
+        <div class="section">
+            <h2>Nudge System 🔔</h2>
+            <p id="nudge-message">Stay on track! 😊</p>
+            <input type="text" id="custom-nudge" placeholder="Enter your custom reminder">
+            <button onclick="setCustomNudge()">Set Nudge</button>
+            <button onclick="triggerNudge()">Send Nudge</button>
+        </div>
+    </div>
+
+    <!-- Notification Popup -->
+    <div id="notification" class="notification">
+        <p id="notification-message"></p>
+    </div>
+
+    <audio id="nudge-sound" src="notification.mp3"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
