@@ -1,60 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthCircle</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>HealthCircle Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f9f9f9;
+    }
+    .navbar {
+      background-color: #4CAF50 !important;
+    }
+    .btn-outline-info {
+      border-color: #4CAF50;
+      color: #4CAF50;
+    }
+    .btn-outline-info:hover {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .goal-item {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 10px 0;
+      position: relative;
+    }
+    .goal-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 0.8rem;
+    }
+    .greeting-box {
+      padding: 2rem;
+      text-align: center;
+      background-color: #81D4FA;
+      color: #003c4e;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    #dashboard { display: none; }
+  </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙/☀️</button>
 
-    <div class="container">
-        <h1>HealthCircle</h1>
+  <!-- Greeting -->
+  <div id="greeting-screen" class="greeting-box">
+    <div id="random-greeting">Welcome to HealthCircle!</div>
+    <button class="btn btn-dark mt-3" onclick="continueAsGuest()">Continue as Guest</button>
+  </div>
 
-        <!-- Water Intake -->
-        <div class="section">
-            <h2>Water Intake 💧</h2>
-            <p>Glasses Today: <span id="water-count">0</span></p>
-            <button onclick="addWater()">+1 Glass</button>
-            <p>Total This Week: <span id="weekly-water">0</span></p>
+  <!-- App Dashboard -->
+  <div id="dashboard">
+    <nav class="navbar navbar-dark">
+      <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">HealthCircle</span>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+
+      <h2 class="mb-4">Welcome, Guest!</h2>
+
+      <!-- Preset Goals -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Quick Add Preset Goals</h5>
+          <div class="d-flex flex-wrap gap-2">
+            <button onclick="addGoal('Drink Water', 8)" class="btn btn-outline-info">Drink 8 Glasses of Water</button>
+            <button onclick="addGoal('Eat Meals', 3)" class="btn btn-outline-info">Eat 3 Meals</button>
+            <button onclick="addGoal('Sleep (hours)', 8)" class="btn btn-outline-info">Sleep 8 Hours</button>
+            <button onclick="addGoal('Meditate', 1)" class="btn btn-outline-info">15-Min Meditation</button>
+            <button onclick="addGoal('Stretch', 4)" class="btn btn-outline-info">Stretch 4x Today</button>
+          </div>
         </div>
+      </div>
 
-        <!-- Meal Intake -->
-        <div class="section">
-            <h2>Meal Intake 🍽️</h2>
-            <input type="text" id="meal-input" placeholder="Enter meal">
-            <button onclick="logMeal()">Log Meal</button>
-            <ul id="meal-list"></ul>
-            <p>Meals This Week: <span id="weekly-meals">0</span></p>
+      <!-- Custom Goal -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Set a Custom Health Goal</h5>
+          <form id="goal-form">
+            <input type="text" id="goal-input" class="form-control mb-2" placeholder="e.g. Walk around every hour" required>
+            <input type="number" id="goal-total" class="form-control mb-2" placeholder="How many times? (e.g. 4)" required>
+            <button type="submit" class="btn btn-success">Add Custom Goal</button>
+          </form>
         </div>
+      </div>
 
-        <!-- Daily Activity -->
-        <div class="section">
-            <h2>Daily Activity 🏃</h2>
-            <input type="text" id="activity-input" placeholder="Enter activity">
-            <button onclick="logActivity()">Log Activity</button>
-            <ul id="activity-list"></ul>
-            <p>Activities This Week: <span id="weekly-activities">0</span></p>
+      <!-- Goal List -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Your Health Goals</h5>
+          <div id="goal-list" class="mt-3"></div>
         </div>
+      </div>
 
-        <!-- Nudge System -->
-        <div class="section">
-            <h2>Nudge System 🔔</h2>
-            <p id="nudge-message">Stay on track! 😊</p>
-            <input type="text" id="custom-nudge" placeholder="Enter your custom reminder">
-            <button onclick="setCustomNudge()">Set Nudge</button>
-            <button onclick="triggerNudge()">Send Nudge</button>
+      <!-- Timer Section -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Custom Health Reminders</h5>
+          <form id="timer-form" class="row g-2 align-items-end">
+            <div class="col-md-4">
+              <input type="text" id="timer-label" class="form-control" placeholder="Reminder label (e.g. Water)">
+            </div>
+            <div class="col-md-2">
+              <input type="number" id="timer-minutes" class="form-control" placeholder="Minutes">
+            </div>
+            <div class="col-md-2">
+              <input type="number" id="timer-seconds" class="form-control" placeholder="Seconds">
+            </div>
+            <div class="col-md-4 d-grid">
+              <button type="submit" class="btn btn-outline-primary">Start Timer</button>
+            </div>
+          </form>
+          <div id="timer-list" class="mt-3"></div>
         </div>
+      </div>
+
     </div>
+  </div>
 
-    <!-- Notification Popup -->
-    <div id="notification" class="notification">
-        <p id="notification-message"></p>
-    </div>
+  <script>
+    // GREETING
+    const greetings = [
+      "You're one step closer to your goals!",
+      "Let's build healthy habits today!",
+      "Hydrate and dominate!",
+      "Health is wealth!",
+      "Small steps lead to big changes!",
+      "Keep moving forward!",
+      "Today is a great day to start!",
+      "Take care of yourself!",
+      "Your health matters!",
+      "You’ve got this!",
+      "Drink some water!",
+      "Stretch a little!",
+      "Be proud of showing up!",
+      "One task at a time!",
+      "Healthy habits, happy life!",
+      "Don't forget to breathe.",
+      "Rest is productive too!",
+      "Consistency over perfection!",
+      "Self-care is not selfish.",
+      "Every effort counts!",
+      "Fuel your body, fuel your goals!",
+      "Mind your meals!",
+      "Well done for showing up!",
+      "Smile, you’re doing great!",
+      "Balance is key.",
+      "Focus on progress!",
+      "Eat well, feel well.",
+      "Keep the momentum!",
+      "Celebrate your small wins!",
+      "Listen to your body!",
+      "Move for joy!",
+      "Pause. Breathe. Proceed.",
+      "Wellness starts here.",
+      "Empower your choices!",
+      "Keep your circle healthy!",
+      "You are your best investment.",
+      "Be kind to yourself.",
+      "This moment is yours!",
+      "You’re doing better than you think.",
+      "Be water. Flow forward.",
+      "Strong body, strong mind.",
+      "Refuel and refresh!",
+      "Choose health every time!",
+      "You're worth the effort.",
+      "Make today count!",
+      "Trust your pace!",
+      "Your body will thank you.",
+      "You're making progress!",
+      "A better you is building now.",
+      "Healthy you, happy you."
+    ];
 
-    <audio id="nudge-sound" src="notification.mp3"></audio>
+    function continueAsGuest() {
+      document.getElementById('greeting-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+    }
 
-    <script src="script.js"></script>
+    document.getElementById('random-greeting').textContent = greetings[Math.floor(Math.random() * greetings.length)];
+
+    // GOALS
+    const goalForm = document.getElementById('goal-form');
+    const goalList = document.getElementById('goal-list');
+
+    goalForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const goalText = document.getElementById('goal-input').value.trim();
+      const goalTotal = parseInt(document.getElementById('goal-total').value);
+      if (goalText && goalTotal > 0) {
+        addGoal(goalText, goalTotal);
+        goalForm.reset();
+      }
+    });
+
+    function addGoal(text, total) {
+      let progress = 0;
+
+      const goalContainer = document.createElement('div');
+      goalContainer.classList.add('goal-item');
+
+      goalContainer.innerHTML = `
+        <button class="btn btn-sm btn-danger delete-btn" onclick="this.parentElement.remove()">✕</button>
+        <strong>${text}</strong><br>
+        <div class="goal-controls">
+          <button class="btn btn-sm btn-success">+</button>
+          <span class="progress-text">${progress}/${total}</span>
+          <button class="btn btn-sm btn-warning reset-btn">Reset</button>
+        </div>
+      `;
+
+      const incButton = goalContainer.querySelector('.btn-success');
+      const progressText = goalContainer.querySelector('.progress-text');
+      const resetButton = goalContainer.querySelector('.reset-btn');
+
+      incButton.addEventListener('click', () => {
+        if (progress < total) {
+          progress++;
+          progressText.textContent = `${progress}/${total}`;
+        }
+        if (progress === total) {
+          goalContainer.style.opacity = 0.6;
+        }
+      });
+
+      resetButton.addEventListener('click', () => {
+        progress = 0;
+        progressText.textContent = `${progress}/${total}`;
+        goalContainer.style.opacity = 1;
+      });
+
+      goalList.appendChild(goalContainer);
+    }
+
+    // TIMERS
+    let timerCount = 0;
+    const timerForm = document.getElementById('timer-form');
+    const timerList = document.getElementById('timer-list');
+
+    timerForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const label = document.getElementById('timer-label').value || 'Reminder';
+      const minutes = parseInt(document.getElementById('timer-minutes').value) || 0;
+      const seconds = parseInt(document.getElementById('timer-seconds').value) || 0;
+      let timeLeft = minutes * 60 + seconds;
+
+      if (timeLeft <= 0) return;
+
+      const id = 'timer-' + timerCount++;
+      const timerDiv = document.createElement('div');
+      timerDiv.id = id;
+      timerDiv.className = "mt-2";
+
+      const display = document.createElement('div');
+      display.textContent = `⏳ ${label} in: ${minutes}m ${seconds}s`;
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = "btn btn-sm btn-outline-danger ms-2";
+      cancelBtn.textContent = "Cancel";
+
+      timerDiv.appendChild(display);
+      timerDiv.appendChild(cancelBtn);
+      timerList.appendChild(timerDiv);
+
+      const interval = setInterval(() => {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        display.textContent = `⏳ ${label} in: ${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+        timeLeft--;
+
+        if (timeLeft < 0) {
+          clearInterval(interval);
+          display.textContent = `✅ ${label} time!`;
+          alert(`⏰ Reminder: It's time for your "${label}"`);
+        }
+      }, 1000);
+
+      cancelBtn.addEventListener('click', () => {
+        clearInterval(interval);
+        timerDiv.remove();
+      });
+
+      timerForm.reset();
+    });
+  </script>
+
 </body>
 </html>
